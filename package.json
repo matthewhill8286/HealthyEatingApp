@@ -1,14 +1,14 @@
 {
-  "name": "healthyeating",
+  "name": "healthy-eating",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "ios:device": "npx expo run:ios --device",
+    "ios:device": "expo run:ios --device",
     "format": "prettier --write .",
-    "prebuild": "npx expo prebuild --clean",
+    "prebuild": "expo prebuild --clean",
     "build:preview": "eas build --profile preview",
     "build:preview:ios": "eas build --profile preview --platform ios",
     "build:development": "eas build --profile development",
