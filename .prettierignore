@@ -1,0 +1,10 @@
+node_modules
+.expo
+.next
+dist
+build
+package-lock.json
+ios
+android
+gql/
+types/
