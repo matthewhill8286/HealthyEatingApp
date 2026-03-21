@@ -11,9 +11,7 @@ import { AuthProvider, useAuth } from '@/providers/AuthProvider';
 import { GraphQLProvider } from '@/providers/GraphQLProvider';
 import { useRecipeSeed } from '@/hooks/useRecipeSeed';
 
-export {
-  ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',
@@ -48,7 +46,14 @@ function AuthGate() {
 
   if (isLoading || (session && !hasCheckedOnboarding)) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F0FDF4' }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#F0FDF4',
+        }}
+      >
         <ActivityIndicator size="large" color="#16A34A" />
       </View>
     );
@@ -81,11 +86,13 @@ function RootLayoutNav() {
         <Stack.Screen name="ai-suggestion" options={{ headerShown: false }} />
         <Stack.Screen name="ai-meal-detail" options={{ headerShown: false }} />
         <Stack.Screen name="edit-profile" options={{ headerShown: false, presentation: 'modal' }} />
-        <Stack.Screen name="coach-settings" options={{ headerShown: false, presentation: 'modal' }} />
+        <Stack.Screen
+          name="coach-settings"
+          options={{ headerShown: false, presentation: 'modal' }}
+        />
         <Stack.Screen name="nutrition-history" options={{ headerShown: false }} />
         <Stack.Screen name="cooking-log" options={{ headerShown: false }} />
         <Stack.Screen name="my-ingredients" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
     </ThemeProvider>
   );
@@ -95,6 +102,19 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  // Suppress AbortError globally — thrown when Supabase cancels in-flight
+  // fetch requests during component unmount. Expected behaviour, not a crash.
+  useEffect(() => {
+    const origHandler = (global as any).ErrorUtils?.getGlobalHandler?.();
+    (global as any).ErrorUtils?.setGlobalHandler?.((err: any, isFatal: boolean) => {
+      if (err?.name === 'AbortError' || err?.message?.includes('aborted')) return;
+      origHandler?.(err, isFatal);
+    });
+    return () => {
+      if (origHandler) (global as any).ErrorUtils?.setGlobalHandler?.(origHandler);
+    };
+  }, []);
 
   useEffect(() => {
     if (error) throw error;
